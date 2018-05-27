@@ -1,0 +1,50 @@
+﻿@model Granthalaya.Models.Borrow
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Borrow</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Bdate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Bdate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rdate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rdate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Book.Ttile)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Book.Ttile)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.Password)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Bid }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

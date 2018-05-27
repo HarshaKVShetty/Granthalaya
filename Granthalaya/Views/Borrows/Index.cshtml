@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Granthalaya.Models.Borrow>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Bdate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rdate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Book.Ttile)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Uid)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bdate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rdate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Book.Ttile)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.User.Uid)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Bid }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Bid }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Bid })
+        </td>
+    </tr>
+}
+
+</table>
