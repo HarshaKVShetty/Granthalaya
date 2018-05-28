@@ -39,13 +39,40 @@ namespace Granthalaya.Controllers
         // GET: Borrows/Create
         public ActionResult Create(String id)
         {
-            ViewBag.Isbn = new SelectList(db.Books, "Isbn", "Ttile");
-            ViewBag.Uid = new SelectList(db.Users, "Uid", "Password");
-            Borrow borrow = new Borrow();
-            borrow.Uid = Session["UserId"].ToString();
-            borrow.Isbn = id;
-            borrow.Bdate = DateTime.Now;
-            return Create(borrow);
+            Book b = db.Books.Where(item => item.Isbn == id).FirstOrDefault();
+            if (b.AvailableBooks != 0)
+            {
+                ViewBag.Isbn = new SelectList(db.Books, "Isbn", "Ttile");
+                ViewBag.Uid = new SelectList(db.Users, "Uid", "Password");
+                Borrow borrow = new Borrow();
+                borrow.Uid = Session["UserId"].ToString();
+                borrow.Isbn = id;
+                borrow.Bdate = DateTime.Now;
+                return Create(borrow);
+            }
+            else
+            {
+                var notification = new System.Windows.Forms.NotifyIcon()
+                {
+                    Visible = true,
+                    Icon = System.Drawing.SystemIcons.Information,
+                    // optional - BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info,
+                    // optional - BalloonTipTitle = "My Title",
+                    BalloonTipText = "Not Available...",
+                };
+                // Display for 2 seconds.
+                notification.ShowBalloonTip(2000);
+                // This will let the balloon close after it's 2 second timeout
+                // for demonstration purposes. Comment this out to see what happens
+                // when dispose is called while a balloon is still visible.
+                //Thread.Sleep(10000);
+
+                // The notification should be disposed when you don't need it anymore,
+                // but doing so will immediately close the balloon if it's visible.
+                notification.Dispose();
+                return RedirectToAction("Index","Books");
+            }
+            
         }
 
         // POST: Borrows/Create
@@ -62,7 +89,7 @@ namespace Granthalaya.Controllers
                 if(book.AvailableBooks!=0)
                     book.AvailableBooks--;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("MyBooks","Books");
             }
 
             ViewBag.Isbn = new SelectList(db.Books, "Isbn", "Ttile", borrow.Isbn);
@@ -125,10 +152,15 @@ namespace Granthalaya.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            
+            
             Borrow borrow = db.Borrows.Find(id);
+            Book book = db.Books.Where(b => b.Isbn == borrow.Isbn).FirstOrDefault();
+            if (book.AvailableBooks < book.NumberOfBooks)
+                book.AvailableBooks++;
             db.Borrows.Remove(borrow);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("MyBooks","Books");
         }
 
         protected override void Dispose(bool disposing)

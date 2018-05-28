@@ -31,4 +31,12 @@ namespace Granthalaya.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Borrow> Borrows { get; set; }
     }
+
+
+    public class MyBook
+    {
+        public Book Book { get; set; }
+        public Borrow Borrow { get; set; }
+        
+    }
 }

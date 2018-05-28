@@ -2,17 +2,44 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Granthalaya.Models;
 
+
 namespace Granthalaya.Controllers
 {
     public class BooksController : Controller
     {
         private GranthalayaEntities db = new GranthalayaEntities();
+        //GET: My Books
+        public ActionResult MyBooks()
+        {
+            List<MyBook> booksList = new List<MyBook>();
+            String User = Session["UserId"].ToString();
+            var myBooks = (from book in db.Books
+                           join borrow in db.Borrows on book.Isbn equals borrow.Isbn
+                           where borrow.Uid.Equals(User)
+                           select new MyBook
+                           {
+                               Book = book,
+                               Borrow =borrow
+                           }).ToList();
+            foreach (var item in myBooks) //retrieve each item and assign to model
+            {
+                booksList.Add(new MyBook()
+                {
+                    Book = item.Book,
+                    Borrow = item.Borrow
+
+                });
+            }
+
+            return View(booksList);
+        }
 
         // GET: Books
         public ActionResult Index()
