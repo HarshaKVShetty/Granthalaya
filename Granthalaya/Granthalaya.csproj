@@ -268,6 +268,8 @@
     <Content Include="Views\Users\Login.cshtml" />
     <Content Include="Views\Users\UserDashBoard.cshtml" />
     <Content Include="Views\Books\MyBooks.cshtml" />
+    <Content Include="Views\Borrows\History.cshtml" />
+    <Content Include="Views\Shared\_Login_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

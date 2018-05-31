@@ -14,9 +14,41 @@ namespace Granthalaya.Controllers
     {
         private GranthalayaEntities db = new GranthalayaEntities();
 
+        //Get: History
+        public ActionResult History()
+        {
+            String User = Session["UserId"].ToString();
+            List<MyBook> booksList = new List<MyBook>();
+            var myBooks = (from book in db.Books
+                           join borrow in db.Borrows on book.Isbn equals borrow.Isbn
+                           where borrow.Uid.Equals(User) && borrow.Rdate.HasValue
+                           select new MyBook
+                           {
+                               Book = book,
+                               Borrow = borrow
+                           }).ToList();
+            foreach (var item in myBooks) //retrieve each item and assign to model
+            {
+                booksList.Add(new MyBook()
+                {
+                    Book = item.Book,
+                    Borrow = item.Borrow
+
+                });
+            }
+
+            return View(booksList);
+        }
+
+        
+
         // GET: Borrows
         public ActionResult Index()
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var borrows = db.Borrows.Include(b => b.Book).Include(b => b.User);
             return View(borrows.ToList());
         }
@@ -24,6 +56,10 @@ namespace Granthalaya.Controllers
         // GET: Borrows/Details/5
         public ActionResult Details(int? id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -39,6 +75,10 @@ namespace Granthalaya.Controllers
         // GET: Borrows/Create
         public ActionResult Create(String id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             Book b = db.Books.Where(item => item.Isbn == id).FirstOrDefault();
             if (b.AvailableBooks != 0)
             {
@@ -48,6 +88,7 @@ namespace Granthalaya.Controllers
                 borrow.Uid = Session["UserId"].ToString();
                 borrow.Isbn = id;
                 borrow.Bdate = DateTime.Now;
+                borrow.Rdate = null;
                 return Create(borrow);
             }
             else
@@ -100,6 +141,10 @@ namespace Granthalaya.Controllers
         // GET: Borrows/Edit/5
         public ActionResult Edit(int? id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -111,7 +156,7 @@ namespace Granthalaya.Controllers
             }
             ViewBag.Isbn = new SelectList(db.Books, "Isbn", "Ttile", borrow.Isbn);
             ViewBag.Uid = new SelectList(db.Users, "Uid", "Password", borrow.Uid);
-            return View(borrow);
+            return Edit(borrow);
         }
 
         // POST: Borrows/Edit/5
@@ -124,8 +169,12 @@ namespace Granthalaya.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(borrow).State = EntityState.Modified;
+                borrow.Rdate = DateTime.Now;
+                Book book = db.Books.Where(b => b.Isbn == borrow.Isbn).FirstOrDefault();
+                if (book.AvailableBooks < book.NumberOfBooks)
+                    book.AvailableBooks++;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Books");
             }
             ViewBag.Isbn = new SelectList(db.Books, "Isbn", "Ttile", borrow.Isbn);
             ViewBag.Uid = new SelectList(db.Users, "Uid", "Password", borrow.Uid);
@@ -135,6 +184,10 @@ namespace Granthalaya.Controllers
         // GET: Borrows/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -155,9 +208,6 @@ namespace Granthalaya.Controllers
             
             
             Borrow borrow = db.Borrows.Find(id);
-            Book book = db.Books.Where(b => b.Isbn == borrow.Isbn).FirstOrDefault();
-            if (book.AvailableBooks < book.NumberOfBooks)
-                book.AvailableBooks++;
             db.Borrows.Remove(borrow);
             db.SaveChanges();
             return RedirectToAction("MyBooks","Books");

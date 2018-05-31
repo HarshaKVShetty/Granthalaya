@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Granthalaya.Models.MyBook>
+
+@{
+    ViewBag.Title = "History";
+}
+
+<h2>History</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Book.Ttile)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Book.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Book.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Borrow.Bdate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Borrow.Rdate)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Book.Ttile)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Book.Author)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Book.Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Borrow.Bdate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Borrow.Rdate)
+        </td>
+
+    </tr>
+    }
+
+</table>

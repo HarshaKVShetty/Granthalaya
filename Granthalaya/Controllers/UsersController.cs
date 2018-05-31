@@ -17,6 +17,8 @@ namespace Granthalaya.Controllers
         //GET:login
         public ActionResult Login()
         {
+            Session["UserID"] = null;
+            Session["UserName"] = null;
             return View();
         }
 
@@ -53,12 +55,20 @@ namespace Granthalaya.Controllers
         // GET: Users
         public ActionResult Index()
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View(db.Users.ToList());
         }
 
         // GET: Users/Details/5
         public ActionResult Details(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -74,6 +84,10 @@ namespace Granthalaya.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View();
         }
 
@@ -97,6 +111,10 @@ namespace Granthalaya.Controllers
         // GET: Users/Edit/5
         public ActionResult Edit(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -128,6 +146,10 @@ namespace Granthalaya.Controllers
         // GET: Users/Delete/5
         public ActionResult Delete(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -149,6 +171,19 @@ namespace Granthalaya.Controllers
             db.Users.Remove(user);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        //Get: Logout
+        public ActionResult Logout()
+        {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            Session["UserID"] = null;
+            Session["UserName"] = null;
+            return RedirectToAction("Login");
+
         }
 
         protected override void Dispose(bool disposing)

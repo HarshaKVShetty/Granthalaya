@@ -15,14 +15,19 @@ namespace Granthalaya.Controllers
     public class BooksController : Controller
     {
         private GranthalayaEntities db = new GranthalayaEntities();
+
         //GET: My Books
         public ActionResult MyBooks()
         {
-            List<MyBook> booksList = new List<MyBook>();
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login","Users");
+            }
             String User = Session["UserId"].ToString();
+            List<MyBook> booksList = new List<MyBook>();
             var myBooks = (from book in db.Books
                            join borrow in db.Borrows on book.Isbn equals borrow.Isbn
-                           where borrow.Uid.Equals(User)
+                           where borrow.Uid.Equals(User) && borrow.Rdate.Equals(null)
                            select new MyBook
                            {
                                Book = book,
@@ -44,12 +49,20 @@ namespace Granthalaya.Controllers
         // GET: Books
         public ActionResult Index()
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View(db.Books.ToList());
         }
 
         // GET: Books/Details/5
         public ActionResult Details(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -65,6 +78,10 @@ namespace Granthalaya.Controllers
         // GET: Books/Create
         public ActionResult Create()
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View();
         }
 
@@ -88,6 +105,10 @@ namespace Granthalaya.Controllers
         // GET: Books/Edit/5
         public ActionResult Edit(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -119,6 +140,10 @@ namespace Granthalaya.Controllers
         // GET: Books/Delete/5
         public ActionResult Delete(string id)
         {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

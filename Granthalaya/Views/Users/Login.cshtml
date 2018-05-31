@@ -1,4 +1,8 @@
-﻿@model Granthalaya.Models.User
+﻿@{
+    Layout = Request.IsAjaxRequest() ? null : "~/Views/Shared/_Login_Layout.cshtml";
+}
+
+@model Granthalaya.Models.User
 
 
 @{
